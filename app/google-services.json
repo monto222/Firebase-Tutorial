@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "514731984016",
+    "project_id": "fir-tutorial-good",
+    "storage_bucket": "fir-tutorial-good.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514731984016:android:aaf464e36dcbc6a7e00415",
+        "android_client_info": {
+          "package_name": "com.tutorial.firebaseprueba"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBngrNRfwohUxDVU299-nnYbAjMv-CdyU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
