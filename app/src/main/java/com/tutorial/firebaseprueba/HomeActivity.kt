@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.remoteConfig
 import com.tutorial.firebaseprueba.databinding.ActivityHomeBinding
 
@@ -17,10 +18,11 @@ enum class ProviderType {
     FACEBOOK
 }
 
-@SuppressLint("StaticFieldLeak")
 private lateinit var binding: ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,5 +86,25 @@ class HomeActivity : AppCompatActivity() {
 
             throw RuntimeException("Forzado de error")
         }
+
+        binding.saveButton.setOnClickListener {
+            db.collection("users").document(email).set(
+                hashMapOf(
+                    "provider" to provider,
+                    "address" to binding.addressTextView.text.toString(),
+                    "phone" to binding.phoneTextView.text.toString()
+                )
+            )
+        }
+        binding.getButton.setOnClickListener {
+            db.collection("users").document(email).get().addOnSuccessListener {
+                binding.addressTextView.setText(it.get("address") as String?)
+                binding.phoneTextView.setText(it.get("phone") as String?)
+            }
+        }
+        binding.deleteButton.setOnClickListener {
+            db.collection("users").document(email).delete()
+        }
+
     }
 }
