@@ -16,9 +16,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.tutorial.firebaseprueba.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -47,10 +51,39 @@ class AuthActivity : AppCompatActivity() {
                 }
             }
 
+        //Remote config
+        val configSettings= remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 60
+        }
+        val firebaseConfig = Firebase.remoteConfig
+        firebaseConfig.setConfigSettingsAsync(configSettings)
+        firebaseConfig.setDefaultsAsync(mapOf("show_error_button" to false, "error_button_text" to "quiero forzar un error"))
 
-        //Setup
+
+        //Setup-
         setup()
         session()
+        notification()
+    }
+
+    private fun notification() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                println("Este es el token del dispositivo: $token")
+            } else {
+                println("No se pudo obtener el token del dispositivo: ${task.exception}")
+            }
+        }
+
+        // Temas (Topics)
+        FirebaseMessaging.getInstance().subscribeToTopic("tutorial")
+
+        //Recuperar informacion de una notificacion push
+        val url = intent.getStringExtra("url")
+        url?.let {
+            println("Ha llegado informacion en una push: ${it}")
+        }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -78,7 +111,6 @@ class AuthActivity : AppCompatActivity() {
             Log.e(TAG, "Error al iniciar sesión con Google: ${e.message}")
         }
     }
-
 
     override fun onStart() {
         super.onStart()
