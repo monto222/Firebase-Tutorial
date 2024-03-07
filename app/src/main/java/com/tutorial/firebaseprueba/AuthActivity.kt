@@ -4,16 +4,13 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -22,26 +19,20 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import java.security.Provider
+import com.tutorial.firebaseprueba.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
 
     private val GOOGLE_SIGN_IN = 100
-
-    private lateinit var signUpButton: Button
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-    private lateinit var authLayout: LinearLayout
-    private lateinit var googleButton: Button
-
+    private lateinit var binding: ActivityAuthBinding
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_auth)
-        initComponents()
+
+        binding = ActivityAuthBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val analytics = FirebaseAnalytics.getInstance(this)
         val bundle = Bundle()
         bundle.putString("message", "Integracion de Firebase completa")
@@ -91,7 +82,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        authLayout.visibility = View.VISIBLE
+        binding.authLayout.visibility = View.VISIBLE
     }
 
     private fun session() {
@@ -101,29 +92,19 @@ class AuthActivity : AppCompatActivity() {
         val provider = prefs.getString("provider", null)
 
         if (email != null && provider != null) {
-            authLayout.visibility = View.INVISIBLE
+            binding.authLayout.visibility = View.INVISIBLE
             showHome(email, ProviderType.valueOf(provider))
         }
     }
 
-    private fun initComponents() {
-        signUpButton = findViewById(R.id.signUpButton)
-        emailEditText = findViewById(R.id.emailEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        loginButton = findViewById(R.id.loginButton)
-        authLayout = findViewById(R.id.authLayout)
-        googleButton = findViewById(R.id.googleButton)
-
-    }
-
     private fun setup() {
         title = "Autentificación"
-        signUpButton.setOnClickListener {
-            if (emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()) {
+        binding.signUpButton.setOnClickListener {
+            if (binding.emailEditText.text.isNotEmpty() && binding.passwordEditText.text.isNotEmpty()) {
 
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(
-                    emailEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    binding.emailEditText.text.toString(),
+                    binding.passwordEditText.text.toString()
                 ).addOnCompleteListener {
                     if (it.isSuccessful) {
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
@@ -134,7 +115,7 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        googleButton.setOnClickListener {
+        binding.googleButton.setOnClickListener {
             //Configuracion
 
             val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -150,12 +131,12 @@ class AuthActivity : AppCompatActivity() {
 
         }
 
-        loginButton.setOnClickListener {
-            if (emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()) {
+        binding.loginButton.setOnClickListener {
+            if (binding.emailEditText.text.isNotEmpty() && binding.passwordEditText.text.isNotEmpty()) {
 
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                    emailEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    binding.emailEditText.text.toString(),
+                    binding.passwordEditText.text.toString()
                 ).addOnCompleteListener {
                     if (it.isSuccessful) {
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
