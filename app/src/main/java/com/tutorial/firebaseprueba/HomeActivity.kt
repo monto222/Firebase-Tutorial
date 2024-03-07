@@ -8,7 +8,8 @@ import com.tutorial.firebaseprueba.databinding.ActivityHomeBinding
 
 enum class ProviderType {
     BASIC,
-    GOOGLE
+    GOOGLE,
+    FACEBOOK
 }
 
 private lateinit var binding: ActivityHomeBinding
